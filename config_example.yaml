@@ -1,0 +1,8 @@
+birthdays:
+  "09-15": ["Daphnee", "Lain"]
+  "12-30": ["Alice"]
+AccountSid: "TwilioAccountSid"
+AuthToken : "TwilioAuthToken"
+FromNumber: "Twilio Phone Number message are sent from"
+ToNumber: "Phone Number this app will send message to"
+
