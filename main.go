@@ -2,6 +2,7 @@ package main
 
 import (
   "os"
+  "fmt"
   "log"
   "time"
   "gopkg.in/yaml.v2"
@@ -51,7 +52,6 @@ func main() {
         logFile := getLogFile()
         log.SetOutput(logFile)
 
-
         config := load_config()
         client := initTwilioClient(config.AccountSid, config.AuthToken)
         message := ""
@@ -64,11 +64,10 @@ func main() {
         if bdays_present {message += bdays}
         if message == "" {message = "Nothing today"}
  
-        resp, err := sendMessage(client, config.ToNumber, config.FromNumber, message)
+        _, err = sendMessage(client, config.ToNumber, config.FromNumber, message)
         if err != nil {
                 log.Fatal(err)
                 return
         }
-        log.Println(resp)
         log.Println("Sent message on %d. \n %d", time.Now(), message)
 }

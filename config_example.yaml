@@ -1,5 +1,5 @@
 birthdays:
-  "09-15": ["Daphnee", "Lain"]
+  "9-15": ["Daphnee", "Lain"]
   "12-30": ["Alice"]
 AccountSid: "TwilioAccountSid"
 AuthToken : "TwilioAuthToken"
