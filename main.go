@@ -2,7 +2,6 @@ package main
 
 import (
   "os"
-  "fmt"
   "log"
   "time"
   "gopkg.in/yaml.v2"
@@ -10,11 +9,12 @@ import (
 )
 
 type Config struct {
-        AccountSid string `yaml:"accountsid"`
-        AuthToken string `yaml:"authtoken"`
-        ToNumber string `yaml:"tonumber"`
-        FromNumber string `yaml:"fromnumber"`
+        AccountSid string `yaml:"AccountSid"`
+        AuthToken string `yaml:"AuthToken"`
+        ToNumber string `yaml:"ToNumber"`
+        FromNumber string `yaml:"FromNumber"`
         Birthdays map[string][]string
+        City string
 }
 
 func load_config() Config{
@@ -57,17 +57,18 @@ func main() {
         message := ""
         
         bdays, bdays_present, err := birthdays_reminder(config.Birthdays)
-        if err != nil {
-                log.Fatal(err)
-        }
+        if err != nil {log.Fatal(err)}
+        weather, err := getWeatherData(config.City)
+        if err != nil {log.Fatal(err)}
         
+        // TODO Ok for now, but template next time 
         if bdays_present {message += bdays}
+        if weather != "" {message += weather}
         if message == "" {message = "Nothing today"}
- 
         _, err = sendMessage(client, config.ToNumber, config.FromNumber, message)
         if err != nil {
-                log.Fatal(err)
-                return
+           log.Fatal(err)
+           return
         }
         log.Println("Sent message on %d. \n %d", time.Now(), message)
 }
