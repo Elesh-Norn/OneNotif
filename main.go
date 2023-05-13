@@ -2,19 +2,25 @@ package main
 
 import (
   "os"
+  "bytes"
   "log"
   "time"
   "gopkg.in/yaml.v2"
   "path/filepath"
+  "net/http"
+  "encoding/json"
 )
 
 type Config struct {
-        AccountSid string `yaml:"AccountSid"`
-        AuthToken string `yaml:"AuthToken"`
-        ToNumber string `yaml:"ToNumber"`
-        FromNumber string `yaml:"FromNumber"`
-        Birthdays map[string][]string
-        City string
+  DiscordEnabled bool `yaml:"DiscordEnabled"`
+  DiscordWebhook string `yaml:"DiscordWebhook"`
+  TwilioEnabled bool `yaml:"TwilioEnabled"`
+  TwilioAccountSid string `yaml:"TwilioAccountSid"`
+  TwilioAuthToken string `yaml:"TwilioAuthToken"`
+  TwilioToNumber string `yaml:"TwilioToNumber"`
+  TwilioFromNumber string `yaml:"TwilioFromNumber"`
+  Birthdays map[string][]string
+  City string
 }
 
 func load_config() Config{
@@ -53,7 +59,6 @@ func main() {
         log.SetOutput(logFile)
 
         config := load_config()
-        client := initTwilioClient(config.AccountSid, config.AuthToken)
         message := ""
         
         bdays, bdays_present, err := birthdays_reminder(config.Birthdays)
@@ -65,10 +70,26 @@ func main() {
         if bdays_present {message += bdays}
         if weather != "" {message += weather}
         if message == "" {message = "Nothing today"}
-        _, err = sendMessage(client, config.ToNumber, config.FromNumber, message)
-        if err != nil {
+
+        if config.TwilioEnabled {
+          client := initTwilioClient(config.TwilioAccountSid, config.TwilioAuthToken)
+          _, err = sendMessage(client, config.TwilioToNumber, config.TwilioFromNumber, message)
+          if err != nil {
            log.Fatal(err)
            return
+         }
+       }
+        if config.DiscordEnabled {
+          json_body, _ := json.Marshal(map[string]string{
+            "username": "OneNotif",
+            "content": message,
+          })
+          body := bytes.NewBuffer(json_body)
+          _, err := http.Post(config.DiscordWebhook, "application/json", body)
+          if err != nil {
+            log.Fatal(err)
+            return
+          }
         }
-        log.Println("Sent message on %d. \n %d", time.Now(), message)
+       log.Println("Sent message on %d. \n %d", time.Now(), message)
 }
