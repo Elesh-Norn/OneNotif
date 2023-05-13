@@ -5,7 +5,7 @@ import (
         "bytes"
         "text/template"
 )
-func birthdays_reminder(bdays map[string][]string) (string, bool, error){
+func birthdaysReminders(bdays map[string][]string) (string, bool, error){
         currentTime := time.Now()
         today := fmt.Sprintf("%d-%d", currentTime.Month(), currentTime.Day())
         names, present := bdays[today]
@@ -13,14 +13,14 @@ func birthdays_reminder(bdays map[string][]string) (string, bool, error){
         message := ""
         
         if present {
-                bday_template := template.New("bday")
-                bday_template, err := bday_template.Parse("Birthday(s) today: {{range .}}{{.}} {{end}}\n")
+                bdayTemplate := template.New("bday")
+                bdayTemplate, err := bdayTemplate.Parse("Birthday(s) today: {{range .}}{{.}} {{end}}\n")
                 if err != nil {
                     return message, present, err
                 }
-                var bday_message bytes.Buffer
-                bday_template.Execute(&bday_message, names)
-                message = bday_message.String()
+                var bdayMessage bytes.Buffer
+                bdayTemplate.Execute(&bdayMessage, names)
+                message = bdayMessage.String()
         }
         return message, present, nil
 }

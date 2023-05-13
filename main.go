@@ -61,7 +61,7 @@ func main() {
         config := load_config()
         message := ""
         
-        bdays, bdays_present, err := birthdays_reminder(config.Birthdays)
+        bdays, bdays_present, err := birthdaysReminders(config.Birthdays)
         if err != nil {log.Fatal(err)}
         weather, err := getWeatherData(config.City)
         if err != nil {log.Fatal(err)}
