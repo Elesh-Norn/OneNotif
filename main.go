@@ -19,8 +19,8 @@ type Config struct {
   TwilioAuthToken string `yaml:"TwilioAuthToken"`
   TwilioToNumber string `yaml:"TwilioToNumber"`
   TwilioFromNumber string `yaml:"TwilioFromNumber"`
-  Birthdays map[string][]string
-  City string
+  Birthdays map[string][]string `yaml:"Birthdays"`
+  City string `yaml:"City"`
 }
 
 func load_config() Config{
@@ -66,7 +66,7 @@ func main() {
         weather, err := getWeatherData(config.City)
         if err != nil {log.Fatal(err)}
         
-        // TODO Ok for now, but template next time 
+        // TODO Ok for now, but template next time
         if bdays_present {message += bdays}
         if weather != "" {message += weather}
         if message == "" {message = "Nothing today"}
